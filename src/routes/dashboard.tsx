@@ -1,14 +1,20 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { auth } from "@clerk/tanstack-react-start/server";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { TopNavbar } from "@/components/top-navbar";
 import { PageLoader } from "@/components/page-loader";
 
+const getCurrentUser = createServerFn({ method: "GET" }).handler(async () => {
+  const { userId } = await auth();
+  return { userId };
+});
+
 export const Route = createFileRoute("/dashboard")({
-  beforeLoad: async ({ context }) => {
-    const { userId } = await auth();
-    if (!userId) {
+  beforeLoad: async () => {
+    const { userId } = await getCurrentUser();
+    if (userId === null) {
       throw redirect({ to: "/sign-in" });
     }
   },
