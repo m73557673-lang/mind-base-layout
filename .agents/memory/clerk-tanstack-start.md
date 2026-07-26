@@ -28,6 +28,15 @@ The imported app can render Clerk's sign-in UI in keyless/development mode, but 
 
 **How to apply:** Treat the sign-in screen as the expected unauthenticated preview state; configure the two Clerk keys before testing an authenticated dashboard flow or deploying.
 
+### SSO callback / sub-routes return 404
+Clerk's `<SignIn routing="path" path="/sign-in">` handles internal steps (OAuth callback, MFA, email verification) by navigating to child paths like `/sign-in/sso-callback`, `/sign-in/factor-two`, etc. TanStack Router requires explicit routes for these paths — they are NOT automatically handled.
+
+**Fix:** Create splat catch-all routes `src/routes/sign-in.$.tsx` and `src/routes/sign-up.$.tsx` that render the same `<SignIn>` / `<SignUp>` component with the same `routing="path"` props. TanStack Router's file-based code-gen picks them up automatically on the next hot reload.
+
+**Why:** TanStack Router matches routes strictly; unmatched paths fall through to the 404 component. Clerk relies on the host router to render its component at every sub-path and then internally delegates based on the current URL.
+
+**How to apply:** Any project using Clerk path-based routing with TanStack Router needs both `sign-in.$.tsx` and `sign-up.$.tsx` splat routes alongside the base `sign-in.tsx` and `sign-up.tsx` routes.
+
 ### Stale Vite cache causes "multiple React copies" error
 After adding `@clerk/tanstack-react-start`, the Vite dep cache can serve an old `react.js` bundle hash while Clerk's bundle uses a newer one, causing `TypeError: Cannot read properties of null (reading 'useContext')`.
 **Fix:** `rm -rf node_modules/.vite .cache` then restart.
