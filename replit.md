@@ -11,11 +11,16 @@ A "chat with your PDFs" web app — upload documents, ask questions, get cited a
 
 ## Running the app
 
-```sh
-bun run dev --port 5000 --host 0.0.0.0
-```
+Two services run together:
 
-The dev server starts on port 5000. The configured Replit workflow (`Start application`) runs this automatically.
+| Service | Command | Port | Workflow |
+|---|---|---|---|
+| Frontend (TanStack Start) | `bun run dev --port 5000 --host 0.0.0.0` | 5000 | `Start application` |
+| Backend (FastAPI) | `python3 -m uvicorn backend.main:app --host 0.0.0.0 --port 8000` | 8000 | `Backend API` |
+
+The Vite dev server proxies `/api/*` requests to the FastAPI backend, so the frontend always uses relative URLs.
+
+Uploaded PDF files are saved to `uploads/pdfs/` (gitignored).
 
 ## Project structure
 
@@ -48,16 +53,33 @@ Authentication is fully wired via `@clerk/tanstack-react-start`.
 
 ## Environment variables
 
-Copy `.env.example` to `.env` and fill in values as needed:
+| Variable | Description | Where set |
+|---|---|---|
+| `VITE_APP_NAME` | App display name | Shared env var |
+| `VITE_APP_URL` | Public app URL | Shared env var |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (pk_…) — **required** | Replit Secret |
+| `CLERK_SECRET_KEY` | Clerk secret key (sk_…) — **required** | Replit Secret |
+| `DATABASE_URL` | PostgreSQL connection string — **auto-managed by Replit** | Runtime |
+| `OPENAI_API_KEY` | OpenAI key (optional — for AI features) | Replit Secret |
+| `ANTHROPIC_API_KEY` | Anthropic key (optional — for AI features) | Replit Secret |
 
-| Variable | Description |
-|---|---|
-| `VITE_APP_NAME` | App display name |
-| `VITE_APP_URL` | Public app URL |
-| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (pk_…) — **required** |
-| `CLERK_SECRET_KEY` | Clerk secret key (sk_…) — **required** |
-| `OPENAI_API_KEY` | OpenAI key (optional — for AI features) |
-| `ANTHROPIC_API_KEY` | Anthropic key (optional — for AI features) |
+## PDF Upload module
+
+Located in `src/components/documents/` and `backend/`. Features:
+- Drag & drop + browse-file upload of multiple PDFs
+- Per-file upload progress bar (XHR with `onprogress`)
+- Client-side validation: PDF-only, 50 MB max per file
+- Inline rename (click pencil icon on any document card)
+- Delete with confirmation dialog
+- Sonner toasts for success / error feedback
+
+Backend endpoints (FastAPI, `backend/main.py`):
+- `POST /api/documents/upload` — upload one or more PDFs, saves to `uploads/pdfs/`, stores metadata in PostgreSQL
+- `GET /api/documents` — list the current user's documents
+- `PATCH /api/documents/{id}/rename` — rename a document
+- `DELETE /api/documents/{id}` — delete document + file from disk
+
+All endpoints are user-scoped via the `x-user-id` request header (set by the frontend from Clerk's `userId`).
 
 ## User preferences
 
