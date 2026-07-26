@@ -21,6 +21,13 @@ description: How Clerk auth is wired into this project and known gotchas to avoi
 
 **How to apply:** Any time you need `<SignedIn>` or `<SignedOut>` behavior, use `const { isSignedIn, isLoaded } = useAuth()` and conditional JSX.
 
+### Keyless preview limitation
+The imported app can render Clerk's sign-in UI in keyless/development mode, but protected dashboard routes are not a reliable verification target until matching Clerk publishable and secret keys are configured in the workspace.
+
+**Why:** The preview reported Clerk session refresh redirect loops when no matching project keys were present.
+
+**How to apply:** Treat the sign-in screen as the expected unauthenticated preview state; configure the two Clerk keys before testing an authenticated dashboard flow or deploying.
+
 ### Stale Vite cache causes "multiple React copies" error
 After adding `@clerk/tanstack-react-start`, the Vite dep cache can serve an old `react.js` bundle hash while Clerk's bundle uses a newer one, causing `TypeError: Cannot read properties of null (reading 'useContext')`.
 **Fix:** `rm -rf node_modules/.vite .cache` then restart.
