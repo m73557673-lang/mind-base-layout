@@ -8,6 +8,11 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+uploads/
+__pycache__/
+*.pyc
+*.pyo
+.python-version
 dist
 dist-ssr
 .output
