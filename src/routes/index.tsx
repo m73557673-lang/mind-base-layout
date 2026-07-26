@@ -1,24 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { LandingNav } from "@/components/landing/landing-nav";
+import { Hero } from "@/components/landing/hero";
+import { Features } from "@/components/landing/features";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { CTA } from "@/components/landing/cta";
+import { LandingFooter } from "@/components/landing/footer";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "DocMind AI — Chat with your PDFs" },
+      {
+        name: "description",
+        content:
+          "Upload PDFs and get instant, cited answers. A focused AI workspace for reading, researching, and summarizing documents.",
+      },
+      { property: "og:title", content: "DocMind AI — Chat with your PDFs" },
+      {
+        property: "og:description",
+        content: "Turn dense PDFs into clear, cited answers with DocMind AI.",
+      },
+    ],
+  }),
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Landing() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background text-foreground">
+      <LandingNav />
+      <main>
+        <Hero />
+        <Features />
+        <HowItWorks />
+        <CTA />
+      </main>
+      <LandingFooter />
     </div>
   );
 }
