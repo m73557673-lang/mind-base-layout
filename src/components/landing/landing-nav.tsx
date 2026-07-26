@@ -1,9 +1,12 @@
 import { Link } from "@tanstack/react-router";
+import { useAuth, UserButton } from "@clerk/tanstack-react-start";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function LandingNav() {
+  const { isSignedIn, isLoaded } = useAuth();
+
   return (
     <header className="sticky top-0 z-40 border-b border-transparent bg-background/70 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
@@ -17,12 +20,35 @@ export function LandingNav() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
-          <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-            <Link to="/dashboard">Sign in</Link>
-          </Button>
-          <Button asChild size="sm">
-            <Link to="/dashboard">Get started</Link>
-          </Button>
+
+          {isLoaded && isSignedIn ? (
+            <>
+              <Button asChild size="sm" variant="outline">
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "h-8 w-8",
+                    userButtonPopoverCard:
+                      "shadow-elegant border border-border bg-card rounded-2xl",
+                    userButtonPopoverActionButton: "hover:bg-accent text-foreground",
+                    userButtonPopoverActionButtonText: "text-foreground",
+                    userButtonPopoverFooter: "hidden",
+                  },
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+                <Link to="/sign-in">Sign in</Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link to="/sign-up">Get started</Link>
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>

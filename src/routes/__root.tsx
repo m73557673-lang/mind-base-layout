@@ -7,6 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { ClerkProvider } from "@clerk/tanstack-react-start";
 import { useEffect, type ReactNode } from "react";
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 
@@ -128,10 +129,12 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <Outlet />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ClerkProvider afterSignOutUrl="/">
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <Outlet />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ClerkProvider>
   );
 }

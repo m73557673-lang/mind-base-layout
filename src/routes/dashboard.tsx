@@ -1,10 +1,17 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { auth } from "@clerk/tanstack-react-start/server";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { TopNavbar } from "@/components/top-navbar";
 import { PageLoader } from "@/components/page-loader";
 
 export const Route = createFileRoute("/dashboard")({
+  beforeLoad: async ({ context }) => {
+    const { userId } = await auth();
+    if (!userId) {
+      throw redirect({ to: "/sign-in" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Dashboard — DocMind AI" },

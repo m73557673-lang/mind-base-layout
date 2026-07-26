@@ -32,6 +32,20 @@ src/
   start.ts        # TanStack Start entry (middleware)
 ```
 
+## Authentication (Clerk)
+
+Authentication is fully wired via `@clerk/tanstack-react-start`.
+
+| Route | Behavior |
+|---|---|
+| `/sign-in` | Embedded Clerk sign-in (email + Google OAuth) |
+| `/sign-up` | Embedded Clerk sign-up with email verification |
+| `/dashboard/*` | Protected — redirects unauthenticated users to `/sign-in` |
+
+**Session management** is handled by Clerk middleware (`clerkMiddleware` in `src/start.ts`).  
+**User profile & sign-out** are accessible via the `UserButton` in the top navbar and landing nav.  
+**Post-login redirect**: both sign-in and sign-up redirect to `/dashboard` on success.
+
 ## Environment variables
 
 Copy `.env.example` to `.env` and fill in values as needed:
@@ -40,6 +54,8 @@ Copy `.env.example` to `.env` and fill in values as needed:
 |---|---|
 | `VITE_APP_NAME` | App display name |
 | `VITE_APP_URL` | Public app URL |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (pk_…) — **required** |
+| `CLERK_SECRET_KEY` | Clerk secret key (sk_…) — **required** |
 | `OPENAI_API_KEY` | OpenAI key (optional — for AI features) |
 | `ANTHROPIC_API_KEY` | Anthropic key (optional — for AI features) |
 

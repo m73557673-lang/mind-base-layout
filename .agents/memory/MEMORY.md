@@ -1,0 +1,1 @@
+- [Clerk TanStack Start setup](clerk-tanstack-start.md) — auth wired; key gotchas with SignedIn/SignedOut exports and SSR

@@ -1,9 +1,9 @@
 import { Bell, Search } from "lucide-react";
+import { UserButton } from "@clerk/tanstack-react-start";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from "./theme-toggle";
 
 export function TopNavbar() {
@@ -26,11 +26,18 @@ export function TopNavbar() {
           <Bell className="h-[1.15rem] w-[1.15rem]" />
         </Button>
         <ThemeToggle />
-        <Avatar className="h-8 w-8">
-          <AvatarFallback className="bg-brand text-brand-foreground text-xs font-semibold">
-            DM
-          </AvatarFallback>
-        </Avatar>
+        <UserButton
+          appearance={{
+            elements: {
+              avatarBox: "h-8 w-8",
+              userButtonPopoverCard:
+                "shadow-elegant border border-border bg-card rounded-2xl",
+              userButtonPopoverActionButton: "hover:bg-accent text-foreground",
+              userButtonPopoverActionButtonText: "text-foreground",
+              userButtonPopoverFooter: "hidden",
+            },
+          }}
+        />
       </div>
     </header>
   );
